@@ -7,7 +7,8 @@
 
 <script>
 import {isEqual} from "lodash"
-import PatternLockJS from "./pattern-lock/PatternLock"
+// import PatternLockJS from "./pattern-lock/PatternLock"
+import PatternLockJS from "@phenax/pattern-lock-js"
 export default {
   name: 'App',
   mounted() {
@@ -18,7 +19,7 @@ export default {
         width: 300,
         height: 300
       });
-      this.reset()
+      this.patternLock.on("complete", this.onPatternComplete);
     })
   },
   data(){
@@ -45,13 +46,8 @@ export default {
       const zn = parseInt(z) - 1
       return this.mappings[zn]
     },
-    reset() {
-      this.patternLock.reset()
-      this.patternLock.on("complete", this.onPatternComplete);
-    },
     draw() {
       const preFilledPassword = [ 7,4,5,6 ];
-      this.reset()
       preFilledPassword.forEach((node, index) => {
         if(index < (preFilledPassword.length - 1)) {
           const [c1, r1] = this.convertNumberToXY(node)
@@ -65,12 +61,11 @@ export default {
     },
     onPatternComplete(nodes) {
       try {
-        console.clear()
-        const password = JSON.parse(nodes.password).map(node => this.convertXYToNumber(node.col, node.row))
+        const password = nodes.nodes.map(node => this.convertXYToNumber(node.col, node.row))
         console.log(password)
       }
       catch(e){
-        console.error(e)
+        // console.error(e)
       }
     }
   }
